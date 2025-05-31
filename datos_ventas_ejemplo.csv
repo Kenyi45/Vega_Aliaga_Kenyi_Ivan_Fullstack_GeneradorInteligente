@@ -1,0 +1,53 @@
+date,product,category,region,quantity,sales_amount,vendedor,cliente
+2024-01-15,Laptop Gaming MSI,Electrónicos,Norte,1,1299.99,Juan Pérez,TechStore Norte
+2024-01-15,Mouse Logitech G502,Accesorios,Norte,3,239.97,Juan Pérez,TechStore Norte
+2024-01-16,iPhone 15 Pro,Electrónicos,Sur,2,2398.00,María García,MovilShop Sur
+2024-01-16,Cargador Inalámbrico,Accesorios,Sur,5,149.95,María García,MovilShop Sur
+2024-01-17,Monitor 4K Samsung,Electrónicos,Centro,1,449.99,Carlos López,DisplayMax Centro
+2024-01-17,Teclado Mecánico RGB,Accesorios,Centro,2,259.98,Carlos López,DisplayMax Centro
+2024-01-18,MacBook Air M3,Electrónicos,Este,1,1399.00,Ana Rodríguez,AppleStore Este
+2024-01-18,AirPods Pro,Accesorios,Este,3,749.97,Ana Rodríguez,AppleStore Este
+2024-01-19,PC Gaming Custom,Electrónicos,Norte,1,2199.99,Juan Pérez,GameZone Norte
+2024-01-19,Webcam HD Logitech,Accesorios,Norte,4,359.96,Juan Pérez,GameZone Norte
+2024-01-20,Tablet iPad Air,Electrónicos,Sur,2,1198.00,María García,TechSur
+2024-01-20,Funda iPad,Accesorios,Sur,6,239.94,María García,TechSur
+2024-01-21,Smart TV 55" LG,Electrónicos,Centro,1,799.99,Carlos López,ElectroCenter
+2024-01-21,Soundbar Samsung,Accesorios,Centro,1,199.99,Carlos López,ElectroCenter
+2024-01-22,PlayStation 5,Electrónicos,Este,1,499.99,Ana Rodríguez,GameWorld Este
+2024-01-22,Control PS5 Extra,Accesorios,Este,2,139.98,Ana Rodríguez,GameWorld Este
+2024-01-23,Nintendo Switch OLED,Electrónicos,Norte,2,699.98,Juan Pérez,NintendoShop Norte
+2024-01-23,Juego Zelda TOTK,Accesorios,Norte,3,179.97,Juan Pérez,NintendoShop Norte
+2024-01-24,Auriculares Sony WH-1000XM5,Accesorios,Sur,1,299.99,María García,AudioPro Sur
+2024-01-24,Cable USB-C,Accesorios,Sur,10,129.90,María García,AudioPro Sur
+2024-01-25,Impresora HP LaserJet,Electrónicos,Centro,1,229.99,Carlos López,OfficeMax Centro
+2024-01-25,Tinta HP Original,Accesorios,Centro,4,183.96,Carlos López,OfficeMax Centro
+2024-01-26,Drone DJI Mini 3,Electrónicos,Este,1,759.99,Ana Rodríguez,DroneZone Este
+2024-01-26,Batería Extra Drone,Accesorios,Este,2,179.98,Ana Rodríguez,DroneZone Este
+2024-01-27,Cámara Canon EOS R5,Electrónicos,Norte,1,3899.99,Juan Pérez,PhotoPro Norte
+2024-01-27,Lente Canon 24-70mm,Accesorios,Norte,1,1299.99,Juan Pérez,PhotoPro Norte
+2024-01-28,Altavoz Bluetooth JBL,Accesorios,Sur,3,299.97,María García,SoundStore Sur
+2024-01-28,Powerbank Anker,Accesorios,Sur,5,249.95,María García,SoundStore Sur
+2024-01-29,Router WiFi 6 ASUS,Electrónicos,Centro,2,359.98,Carlos López,NetShop Centro
+2024-01-29,Cable Ethernet Cat6,Accesorios,Centro,8,127.92,Carlos López,NetShop Centro
+2024-01-30,Smartwatch Apple Watch 9,Electrónicos,Este,1,429.99,Ana Rodríguez,WearTech Este
+2024-01-30,Correa Apple Watch,Accesorios,Este,3,149.97,Ana Rodríguez,WearTech Este
+2024-02-01,Gaming Chair RGB,Accesorios,Norte,1,249.99,Juan Pérez,GamerZone Norte
+2024-02-01,Desk Gaming RGB,Accesorios,Norte,1,179.99,Juan Pérez,GamerZone Norte
+2024-02-02,SSD 1TB Samsung,Electrónicos,Sur,3,389.97,María García,StorageShop Sur
+2024-02-02,HDD 2TB Seagate,Electrónicos,Sur,2,179.98,María García,StorageShop Sur
+2024-02-03,Raspberry Pi 4,Electrónicos,Centro,5,399.95,Carlos López,MakerSpace Centro
+2024-02-03,Kit Sensores Arduino,Accesorios,Centro,3,104.97,Carlos López,MakerSpace Centro
+2024-02-04,VR Headset Meta Quest 3,Electrónicos,Este,1,799.99,Ana Rodríguez,VRWorld Este
+2024-02-04,Controladores VR,Accesorios,Este,2,259.98,Ana Rodríguez,VRWorld Este
+2024-02-05,Microondas Smart LG,Electrónicos,Norte,1,199.99,Juan Pérez,HomeElectro Norte
+2024-02-05,Platos Microondas,Accesorios,Norte,4,51.96,Juan Pérez,HomeElectro Norte
+2024-02-06,Refrigerador Samsung,Electrónicos,Sur,1,1299.99,María García,CoolAppliances Sur
+2024-02-06,Filtro Agua Nevera,Accesorios,Sur,2,79.98,María García,CoolAppliances Sur
+2024-02-07,Lavadora Whirlpool,Electrónicos,Centro,1,599.99,Carlos López,WashZone Centro
+2024-02-07,Detergente Ecológico,Accesorios,Centro,6,53.94,Carlos López,WashZone Centro
+2024-02-08,Aspiradora Roomba,Electrónicos,Este,1,399.99,Ana Rodríguez,CleanTech Este
+2024-02-08,Filtros Roomba,Accesorios,Este,5,124.95,Ana Rodríguez,CleanTech Este
+2024-02-09,Cafetera Nespresso,Electrónicos,Norte,2,299.98,Juan Pérez,CoffeeShop Norte
+2024-02-09,Cápsulas Nespresso,Accesorios,Norte,12,59.88,Juan Pérez,CoffeeShop Norte
+2024-02-10,Licuadora Vitamix,Electrónicos,Sur,1,349.99,María García,HealthyLife Sur
+2024-02-10,Vasos Licuadora,Accesorios,Sur,4,79.96,María García,HealthyLife Sur 

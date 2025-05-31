@@ -55,6 +55,31 @@ curl -X POST http://localhost:8000/api/auth/login/ \
   }'
 ```
 
+### Cerrar Sesión (Logout)
+
+```bash
+curl -X POST http://localhost:8000/api/auth/logout/ \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer [tu_access_token]" \
+  -d '{
+    "refresh_token": "[tu_refresh_token]"
+  }'
+```
+
+Respuesta exitosa:
+```json
+{
+  "message": "Sesión cerrada exitosamente"
+}
+```
+
+Respuesta de error (token inválido):
+```json
+{
+  "error": "Token inválido"
+}
+```
+
 ### Obtener Información del Usuario
 
 ```bash
