@@ -24,20 +24,21 @@ Sistema completo de generación de contenido que permite a los usuarios crear pr
 
 ## 🏗️ Estructura del Proyecto
 
+```
 Vega_Aliaga_Kenyi_Ivan_Fullstack_GeneradorInteligente/
-├── server/ # Backend Django
-│ ├── core/ # Configuración principal de Django
-│ ├── main/ # Aplicación principal
-│ ├── venv/ # Entorno virtual Python
-│ ├── manage.py # Comando de gestión Django
-│ └── requirements.txt # Dependencias Python
-├── user/ # Frontend React
-│ ├── src/ # Código fuente React
-│ ├── public/ # Archivos públicos
-│ ├── package.json # Dependencias Node.js
-│ └── vite.config.ts # Configuración Vite
-└── README.md # Documentación principal
-
+├── server/                 # Backend Django
+│   ├── core/              # Configuración principal de Django
+│   ├── main/              # Aplicación principal
+│   ├── venv/              # Entorno virtual Python
+│   ├── manage.py          # Comando de gestión Django
+│   └── requirements.txt   # Dependencias Python
+├── user/                  # Frontend React
+│   ├── src/               # Código fuente React
+│   ├── public/            # Archivos públicos
+│   ├── package.json       # Dependencias Node.js
+│   └── vite.config.ts     # Configuración Vite
+└── README.md              # Documentación principal
+```
 
 ## 🚀 Instalación y Configuración
 
@@ -186,13 +187,6 @@ npm run test
 ## 📝 Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
-
-## 👨‍💻 Autor
-
-**Kenyi Ivan Vega Aliaga**
-- GitHub: [@TU_USUARIO](https://github.com/TU_USUARIO)
-- LinkedIn: [Tu LinkedIn](https://linkedin.com/in/tu-perfil)
-- Email: tu.email@example.com
 
 ## 🙏 Agradecimientos
 
