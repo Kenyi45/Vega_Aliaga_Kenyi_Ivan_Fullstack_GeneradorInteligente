@@ -1,0 +1,13 @@
+# Configuración de la base de datos PostgreSQL
+DB_NAME=generador_informes
+DB_USER=postgres
+DB_PASSWORD=password
+DB_HOST=localhost
+DB_PORT=5432
+
+# Configuración de Django
+SECRET_KEY=django-insecure-hi%yspozhc0-o8f#@r=bq=*ewki&6aykbv3hj84^ul63n3vnk@
+DEBUG=True
+
+# Configuración de CORS (para desarrollo)
+FRONTEND_URL=http://localhost:5173 
