@@ -322,7 +322,7 @@ const RealUploadPage = () => {
           <div className="text-gray-600 leading-relaxed">
             <p className="mb-4">Tu archivo CSV debe contener columnas como:</p>
             <div className="bg-gray-50 p-4 rounded-lg font-mono text-sm border">
-              fecha,producto,categoria,region,cantidad,precio<br/>
+              fecha,producto,categoria,region,cantidad,sales_amount<br/>
               2024-01-15,Laptop Pro,Electrónicos,Norte,2,1500.00<br/>
               2024-01-16,Mouse,Accesorios,Sur,5,45.99
             </div>

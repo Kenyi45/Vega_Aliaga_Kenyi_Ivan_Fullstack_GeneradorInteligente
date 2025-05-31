@@ -1,0 +1,61 @@
+fecha,producto,categoria,region,cantidad,sales_amount
+2024-01-15,Laptop HP Pavilion,Electrónicos,Norte,25,2500.00
+2024-01-16,Mouse Logitech,Electrónicos,Sur,150,35.50
+2024-01-17,Teclado Mecánico,Electrónicos,Centro,80,125.75
+2024-01-18,Monitor Samsung 24,Electrónicos,Norte,45,450.00
+2024-01-19,Auriculares Sony,Electrónicos,Este,200,89.99
+2024-01-20,Smartphone iPhone,Electrónicos,Sur,30,1200.00
+2024-01-21,Tablet Android,Electrónicos,Centro,60,350.00
+2024-01-22,Cámara Canon,Electrónicos,Norte,15,800.00
+2024-01-23,Impresora HP,Electrónicos,Oeste,35,299.99
+2024-01-24,Disco Duro SSD,Electrónicos,Este,120,180.00
+2024-01-25,Mesa de Oficina,Muebles,Norte,20,450.00
+2024-01-26,Silla Ergonómica,Muebles,Sur,40,320.00
+2024-01-27,Estante Modular,Muebles,Centro,25,180.50
+2024-01-28,Escritorio Ejecutivo,Muebles,Norte,12,750.00
+2024-01-29,Archivador Metálico,Muebles,Este,30,220.00
+2024-01-30,Lámpara LED,Muebles,Sur,85,65.00
+2024-02-01,Sofá 3 Plazas,Muebles,Centro,8,1200.00
+2024-02-02,Mesa de Centro,Muebles,Oeste,15,280.00
+2024-02-03,Cómoda 4 Cajones,Muebles,Norte,18,420.00
+2024-02-04,Espejo Decorativo,Muebles,Sur,50,95.00
+2024-02-05,Cafetera Express,Electrodomésticos,Norte,35,380.00
+2024-02-06,Microondas Samsung,Electrodomésticos,Sur,28,250.00
+2024-02-07,Refrigeradora LG,Electrodomésticos,Centro,10,1800.00
+2024-02-08,Lavadora Electrolux,Electrodomésticos,Este,12,1500.00
+2024-02-09,Licuadora Oster,Electrodomésticos,Norte,65,120.00
+2024-02-10,Tostadora Philips,Electrodomésticos,Sur,45,85.00
+2024-02-11,Plancha a Vapor,Electrodomésticos,Centro,75,95.00
+2024-02-12,Aspiradora Robot,Electrodomésticos,Oeste,20,650.00
+2024-02-13,Ventilador de Techo,Electrodomésticos,Norte,40,180.00
+2024-02-14,Aire Acondicionado,Electrodomésticos,Sur,8,2200.00
+2024-02-15,Camisa Polo,Ropa,Norte,200,45.00
+2024-02-16,Pantalón Jean,Ropa,Sur,150,65.00
+2024-02-17,Vestido Casual,Ropa,Centro,100,80.00
+2024-02-18,Zapatillas Nike,Ropa,Este,80,150.00
+2024-02-19,Chaqueta de Cuero,Ropa,Norte,25,220.00
+2024-02-20,Blusa Elegante,Ropa,Sur,120,55.00
+2024-02-21,Corbata de Seda,Ropa,Centro,60,35.00
+2024-02-22,Zapatos Formales,Ropa,Oeste,40,180.00
+2024-02-23,Bufanda de Lana,Ropa,Norte,90,28.00
+2024-02-24,Gorro de Invierno,Ropa,Sur,110,22.00
+2024-02-25,Shampoo Pantene,Cuidado Personal,Norte,300,12.50
+2024-02-26,Crema Hidratante,Cuidado Personal,Sur,200,25.00
+2024-02-27,Perfume Hugo Boss,Cuidado Personal,Centro,50,180.00
+2024-02-28,Pasta Dental Colgate,Cuidado Personal,Este,400,8.50
+2024-03-01,Jabón Antibacterial,Cuidado Personal,Norte,250,6.00
+2024-03-02,Desodorante Axe,Cuidado Personal,Sur,180,15.00
+2024-03-03,Maquillaje L'Oreal,Cuidado Personal,Centro,75,45.00
+2024-03-04,Protector Solar,Cuidado Personal,Oeste,120,35.00
+2024-03-05,Vitaminas C,Cuidado Personal,Norte,90,28.00
+2024-03-06,Aceite para Bebé,Cuidado Personal,Sur,160,18.00
+2024-03-07,Arroz Premium,Alimentos,Norte,500,4.50
+2024-03-08,Aceite de Oliva,Alimentos,Sur,200,18.00
+2024-03-09,Leche Evaporada,Alimentos,Centro,300,5.50
+2024-03-10,Pan Integral,Alimentos,Este,400,3.20
+2024-03-11,Pollo Entero,Alimentos,Norte,150,12.00
+2024-03-12,Pescado Fresco,Alimentos,Sur,80,25.00
+2024-03-13,Frutas Mixtas,Alimentos,Centro,250,8.50
+2024-03-14,Verduras Orgánicas,Alimentos,Oeste,180,15.00
+2024-03-15,Yogurt Natural,Alimentos,Norte,220,6.50
+2024-03-16,Queso Fresco,Alimentos,Sur,120,22.00 

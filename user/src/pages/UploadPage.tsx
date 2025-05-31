@@ -122,7 +122,7 @@ export const UploadPage: React.FC = () => {
               <CardContent>
                 <div className="bg-gray-50 rounded-md p-3 text-xs font-mono">
                   <div className="text-gray-700">
-                    fecha,producto,categoria,region,cantidad,precio<br />
+                    fecha,producto,categoria,region,cantidad,sales_amount<br />
                     2024-01-15,Laptop Pro,Electrónicos,Norte,2,1500.00<br />
                     2024-01-16,Mouse Inalámbrico,Accesorios,Sur,5,45.99<br />
                     2024-01-17,Teclado Mecánico,Accesorios,Centro,3,120.50
