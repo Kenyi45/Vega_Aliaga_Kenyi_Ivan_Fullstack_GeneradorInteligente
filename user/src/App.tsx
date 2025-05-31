@@ -2,6 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { Layout } from './components/layout/Layout';
+import { exportDashboardToPDF, exportQuickStats } from './utils/pdfExport';
+import type { DashboardData, Report } from './types/dashboard';
 import { 
   LineChart, 
   Line, 
@@ -21,6 +24,9 @@ import {
 // Páginas que funcionan
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { LogoutPage } from './pages/LogoutPage';
+import { ProfilePage } from './pages/ProfilePage';
+import { UserInfoPage } from './pages/UserInfoPage';
 
 // UploadPage con funcionalidad real
 const RealUploadPage = () => {
@@ -111,7 +117,7 @@ const RealUploadPage = () => {
     setMessage('🔄 Preparando upload...');
 
     try {
-      let token = localStorage.getItem('access_token');
+      const token = localStorage.getItem('access_token');
       
       if (!token) {
         setMessage('❌ No estás autenticado. Redirigiendo al login...');
@@ -206,54 +212,55 @@ const RealUploadPage = () => {
   };
 
   return (
-    <div style={{ padding: '20px', minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+    <Layout>
+      <div className="space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
           📤 Subir Archivo CSV
         </h1>
-        <p style={{ color: '#6b7280', marginBottom: '2rem' }}>
+          <p className="text-gray-600">
           Sube tu archivo de datos de ventas para generar informes inteligentes
         </p>
+        </div>
         
         {/* Zona de upload */}
-        <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem' }}>Subir Nuevo Archivo</h2>
+        <div className="bg-white rounded-xl shadow-sm p-8">
+          <h2 className="text-xl font-semibold mb-6 text-gray-900">Subir Nuevo Archivo</h2>
           
           <div 
-            style={{ 
-              border: dragActive ? '2px dashed #3b82f6' : '2px dashed #d1d5db', 
-              borderRadius: '8px', 
-              padding: '3rem', 
-              textAlign: 'center',
-              backgroundColor: dragActive ? '#eff6ff' : '#f9fafb',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
+            className={`
+              border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-200
+              ${dragActive 
+                ? 'border-blue-500 bg-blue-50' 
+                : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100'
+              }
+            `}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
             onDrop={handleDrop}
             onClick={() => document.getElementById('fileInput')?.click()}
           >
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>
+            <div className="text-6xl mb-4">
               {file ? '📄' : '📁'}
             </div>
             
             {file ? (
               <div>
-                <p style={{ color: '#10b981', fontSize: '1.125rem', fontWeight: '600' }}>
+                <p className="text-green-600 text-lg font-semibold mb-2">
                   {file.name}
                 </p>
-                <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+                <p className="text-gray-500 text-sm">
                   Tamaño: {(file.size / 1024).toFixed(2)} KB
                 </p>
               </div>
             ) : (
               <div>
-                <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
+                <p className="text-gray-600 mb-4 text-lg">
                   Arrastra tu archivo CSV aquí o haz clic para seleccionar
                 </p>
-                <p style={{ color: '#9ca3af', fontSize: '0.875rem' }}>
+                <p className="text-gray-400 text-sm">
                   Archivos soportados: .csv (máximo 10MB)
                 </p>
               </div>
@@ -263,25 +270,17 @@ const RealUploadPage = () => {
               id="fileInput"
               type="file" 
               accept=".csv" 
-              style={{ display: 'none' }}
+              className="hidden"
               onChange={handleFileSelect}
             />
           </div>
           
           {/* Botones */}
-          <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+          <div className="mt-6 flex justify-center gap-4">
             {file && !uploading && (
               <button 
                 onClick={() => setFile(null)}
-                style={{ 
-                  backgroundColor: '#6b7280', 
-                  color: 'white', 
-                  padding: '0.75rem 1.5rem', 
-                  borderRadius: '6px', 
-                  border: 'none',
-                  fontWeight: '500',
-                  cursor: 'pointer'
-                }}
+                className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
               >
                 Cancelar
               </button>
@@ -289,15 +288,13 @@ const RealUploadPage = () => {
             <button 
               onClick={uploadFile}
               disabled={!file || uploading}
-              style={{ 
-                backgroundColor: (!file || uploading) ? '#9ca3af' : '#3b82f6', 
-                color: 'white', 
-                padding: '0.75rem 1.5rem', 
-                borderRadius: '6px', 
-                border: 'none',
-                fontWeight: '500',
-                cursor: (!file || uploading) ? 'not-allowed' : 'pointer'
-              }}
+              className={`
+                px-6 py-3 rounded-lg font-medium transition-colors
+                ${(!file || uploading) 
+                  ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }
+              `}
             >
               {uploading ? '⏳ Procesando...' : '📤 Subir y Procesar'}
             </button>
@@ -305,25 +302,26 @@ const RealUploadPage = () => {
           
           {/* Mensaje */}
           {message && (
-            <div style={{ 
-              marginTop: '1rem', 
-              padding: '1rem', 
-              borderRadius: '6px',
-              backgroundColor: message.includes('❌') ? '#fef2f2' : (message.includes('🔄') ? '#fef3c7' : '#f0fdf4'),
-              color: message.includes('❌') ? '#dc2626' : (message.includes('🔄') ? '#d97706' : '#16a34a'),
-              textAlign: 'center'
-            }}>
+            <div className={`
+              mt-6 p-4 rounded-lg text-center whitespace-pre-line
+              ${message.includes('❌') 
+                ? 'bg-red-50 text-red-700 border border-red-200' 
+                : message.includes('🔄') 
+                  ? 'bg-yellow-50 text-yellow-700 border border-yellow-200' 
+                  : 'bg-green-50 text-green-700 border border-green-200'
+              }
+            `}>
               {message}
             </div>
           )}
         </div>
         
         {/* Guía */}
-        <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '1rem' }}>📋 Formato del Archivo</h3>
-          <div style={{ color: '#6b7280', lineHeight: '1.6' }}>
-            <p style={{ marginBottom: '1rem' }}>Tu archivo CSV debe contener columnas como:</p>
-            <div style={{ fontFamily: 'monospace', backgroundColor: '#f3f4f6', padding: '1rem', borderRadius: '4px', fontSize: '0.875rem' }}>
+        <div className="bg-white rounded-xl shadow-sm p-8">
+          <h3 className="text-lg font-semibold mb-4 text-gray-900">📋 Formato del Archivo</h3>
+          <div className="text-gray-600 leading-relaxed">
+            <p className="mb-4">Tu archivo CSV debe contener columnas como:</p>
+            <div className="bg-gray-50 p-4 rounded-lg font-mono text-sm border">
               fecha,producto,categoria,region,cantidad,precio<br/>
               2024-01-15,Laptop Pro,Electrónicos,Norte,2,1500.00<br/>
               2024-01-16,Mouse,Accesorios,Sur,5,45.99
@@ -331,43 +329,22 @@ const RealUploadPage = () => {
           </div>
         </div>
         
-        <div style={{ marginTop: '2rem' }}>
-          <a 
-            href="/dashboard" 
-            style={{ 
-              backgroundColor: '#6b7280', 
-              color: 'white', 
-              padding: '0.75rem 1.5rem', 
-              borderRadius: '6px', 
-              textDecoration: 'none',
-              fontWeight: '500',
-              marginRight: '1rem'
-            }}
-          >
-            ← Volver al Dashboard
-          </a>
+        <div className="flex gap-4">
           <a 
             href="/reports" 
-            style={{ 
-              backgroundColor: '#10b981', 
-              color: 'white', 
-              padding: '0.75rem 1.5rem', 
-              borderRadius: '6px', 
-              textDecoration: 'none',
-              fontWeight: '500'
-            }}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
           >
             Ver Informes →
           </a>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
 // Dashboard completo con gráficos reales
 const FullDashboard = () => {
-  const [dashboardData, setDashboardData] = React.useState<any>(null);
+  const [dashboardData, setDashboardData] = React.useState<DashboardData | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState('');
 
@@ -407,13 +384,10 @@ const FullDashboard = () => {
   React.useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        let token = localStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         
         if (!token) {
-          setError('No estás autenticado. Redirigiendo al login...');
-          setTimeout(() => {
-            window.location.href = '/login';
-          }, 2000);
+          setError('No estás autenticado');
           return;
         }
 
@@ -488,32 +462,23 @@ const FullDashboard = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: '20px', minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-            📊 Dashboard - IntelliReport
-          </h1>
-          <div style={{ textAlign: 'center', padding: '3rem' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⏳</div>
-            <p>Cargando dashboard...</p>
+      <Layout>
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">⏳</div>
+          <p className="text-gray-600">Cargando dashboard...</p>
           </div>
-        </div>
-      </div>
+      </Layout>
     );
   }
 
   if (error) {
     return (
-      <div style={{ padding: '20px', minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-            📊 Dashboard - IntelliReport
-          </h1>
-          <div style={{ backgroundColor: '#fef2f2', color: '#dc2626', padding: '1rem', borderRadius: '6px' }}>
-            {error}
+      <Layout>
+        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg">
+          <h2 className="text-lg font-semibold mb-2">Error al cargar dashboard</h2>
+          <p>{error}</p>
           </div>
-        </div>
-      </div>
+      </Layout>
     );
   }
 
@@ -525,91 +490,86 @@ const FullDashboard = () => {
   };
 
   return (
-    <div style={{ padding: '20px', minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+    <Layout>
+      <div id="dashboard-content" className="space-y-8">
         {/* Header */}
-        <div style={{ marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             📊 Dashboard - IntelliReport
           </h1>
-          <p style={{ color: '#6b7280' }}>
+          <p className="text-gray-600">
             Resumen ejecutivo de tus análisis de datos y métricas de negocio
           </p>
         </div>
 
         {/* KPI Cards */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-          gap: '1.5rem',
-          marginBottom: '2rem'
-        }}>
-          <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white p-6 rounded-xl shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                 Total de Ventas
               </h3>
-              <div style={{ fontSize: '1.5rem' }}>💰</div>
+              <div className="text-2xl">💰</div>
             </div>
-            <p style={{ fontSize: '2.25rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '0.5rem' }}>
+            <p className="text-3xl font-bold text-gray-900 mb-2">
               ${stats.total_sales ? Number(stats.total_sales).toLocaleString() : '0'}
             </p>
-            <p style={{ fontSize: '0.875rem', color: '#16a34a' }}>
+            <p className="text-sm text-green-600">
               📈 Basado en {stats.total_records} registros
             </p>
           </div>
 
-          <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase' }}>
+          <div className="bg-white p-6 rounded-xl shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                 Archivos Procesados
               </h3>
-              <div style={{ fontSize: '1.5rem' }}>📁</div>
+              <div className="text-2xl">📁</div>
             </div>
-            <p style={{ fontSize: '2.25rem', fontWeight: 'bold', color: '#3b82f6', marginBottom: '0.5rem' }}>
+            <p className="text-3xl font-bold text-blue-600 mb-2">
               {stats.total_files}
             </p>
-            <p style={{ fontSize: '0.875rem', color: '#3b82f6' }}>
+            <p className="text-sm text-blue-600">
               📊 {stats.total_reports} informes generados
             </p>
           </div>
 
-          <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase' }}>
+          <div className="bg-white p-6 rounded-xl shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                 Registros Analizados
               </h3>
-              <div style={{ fontSize: '1.5rem' }}>📋</div>
+              <div className="text-2xl">📋</div>
             </div>
-            <p style={{ fontSize: '2.25rem', fontWeight: 'bold', color: '#10b981', marginBottom: '0.5rem' }}>
+            <p className="text-3xl font-bold text-green-600 mb-2">
               {stats.total_records?.toLocaleString() || '0'}
             </p>
-            <p style={{ fontSize: '0.875rem', color: '#10b981' }}>
+            <p className="text-sm text-green-600">
               🔍 Datos procesados con IA
             </p>
           </div>
 
-          <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase' }}>
+          <div className="bg-white p-6 rounded-xl shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                 Promedio por Venta
               </h3>
-              <div style={{ fontSize: '1.5rem' }}>📊</div>
+              <div className="text-2xl">📊</div>
             </div>
-            <p style={{ fontSize: '2.25rem', fontWeight: 'bold', color: '#f59e0b', marginBottom: '0.5rem' }}>
+            <p className="text-3xl font-bold text-yellow-600 mb-2">
               ${stats.total_records > 0 ? ((stats.total_sales || 0) / stats.total_records).toFixed(2) : '0'}
             </p>
-            <p style={{ fontSize: '0.875rem', color: '#f59e0b' }}>
+            <p className="text-sm text-yellow-600">
               💡 Valor promedio calculado
             </p>
           </div>
         </div>
 
         {/* Gráficos */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Gráfico de Líneas */}
-          <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem', color: '#1f2937' }}>
+          <div className="bg-white p-6 rounded-xl shadow-sm">
+            <h3 className="text-xl font-semibold mb-4 text-gray-900">
               📈 Tendencia de Ventas Mensual
             </h3>
             <ResponsiveContainer width="100%" height={300}>
@@ -626,8 +586,8 @@ const FullDashboard = () => {
           </div>
 
           {/* Gráfico de Barras */}
-          <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem', color: '#1f2937' }}>
+          <div className="bg-white p-6 rounded-xl shadow-sm">
+            <h3 className="text-xl font-semibold mb-4 text-gray-900">
               📊 Ventas por Categoría
             </h3>
             <ResponsiveContainer width="100%" height={300}>
@@ -643,10 +603,10 @@ const FullDashboard = () => {
         </div>
 
         {/* Gráfico de Pie y Resumen */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Gráfico de Pie */}
-          <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem', color: '#1f2937' }}>
+          <div className="bg-white p-6 rounded-xl shadow-sm">
+            <h3 className="text-xl font-semibold mb-4 text-gray-900">
               🌍 Distribución Regional
             </h3>
             <ResponsiveContainer width="100%" height={300}>
@@ -671,15 +631,15 @@ const FullDashboard = () => {
           </div>
 
           {/* Resumen Automático */}
-          <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem', color: '#1f2937' }}>
+          <div className="bg-white p-6 rounded-xl shadow-sm">
+            <h3 className="text-xl font-semibold mb-4 text-gray-900">
               🤖 Resumen Automático con IA
             </h3>
-            <div style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '8px', marginBottom: '1rem' }}>
-              <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: '#374151' }}>
+            <div className="bg-gray-50 p-4 rounded-lg mb-4">
+              <h4 className="text-base font-semibold mb-2 text-gray-700">
                 Análisis de Performance
               </h4>
-              <p style={{ fontSize: '0.875rem', color: '#6b7280', lineHeight: '1.6' }}>
+              <p className="text-sm text-gray-600 leading-relaxed">
                 {stats.total_files > 0 ? 
                   `Basado en ${stats.total_files} archivo(s) procesado(s), se han analizado ${stats.total_records.toLocaleString()} registros de ventas, generando un volumen total de $${Number(stats.total_sales || 0).toLocaleString()}. El promedio por transacción es de $${stats.total_records > 0 ? ((stats.total_sales || 0) / stats.total_records).toFixed(2) : '0'}.`
                   :
@@ -688,87 +648,66 @@ const FullDashboard = () => {
               </p>
             </div>
             
-            <div style={{ backgroundColor: '#fef3c7', padding: '1rem', borderRadius: '8px' }}>
-              <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: '#92400e' }}>
+            <div className="bg-yellow-50 p-4 rounded-lg">
+              <h4 className="text-base font-semibold mb-2 text-yellow-800">
                 💡 Recomendaciones
               </h4>
-              <ul style={{ fontSize: '0.875rem', color: '#78350f', lineHeight: '1.6', paddingLeft: '1rem' }}>
-                <li>Enfócate en las categorías con mejor rendimiento</li>
-                <li>Analiza las tendencias estacionales en tus datos</li>
-                <li>Considera expandir en regiones con menor participación</li>
-                <li>Optimiza el inventario basado en los patrones de demanda</li>
+              <ul className="text-sm text-yellow-700 leading-relaxed pl-4 space-y-1">
+                <li>• Enfócate en las categorías con mejor rendimiento</li>
+                <li>• Analiza las tendencias estacionales en tus datos</li>
+                <li>• Considera expandir en regiones con menor participación</li>
+                <li>• Optimiza el inventario basado en los patrones de demanda</li>
               </ul>
             </div>
           </div>
         </div>
 
         {/* Acciones Rápidas */}
-        <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1.5rem', color: '#1f2937' }}>
+        <div className="bg-white p-8 rounded-xl shadow-sm">
+          <h3 className="text-xl font-semibold mb-6 text-gray-900">
             🚀 Acciones Rápidas
           </h3>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <div className="flex flex-wrap gap-4">
             <a 
               href="/upload" 
-              style={{ 
-                backgroundColor: '#3b82f6', 
-                color: 'white', 
-                padding: '0.75rem 1.5rem', 
-                borderRadius: '8px', 
-                textDecoration: 'none',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 transition-colors"
             >
               📤 Subir Nuevo Archivo
             </a>
             <a 
               href="/reports" 
-              style={{ 
-                backgroundColor: '#10b981', 
-                color: 'white', 
-                padding: '0.75rem 1.5rem', 
-                borderRadius: '8px', 
-                textDecoration: 'none',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 transition-colors"
             >
               📊 Ver Todos los Informes
             </a>
-            <button 
-              onClick={() => {
-                alert('Funcionalidad de exportación PDF próximamente disponible');
+            {/* <button 
+              onClick={async () => {
+                await exportDashboardToPDF('dashboard-content', {
+                  filename: `dashboard-intellireport-${new Date().toISOString().split('T')[0]}.pdf`
+                });
               }}
-              style={{ 
-                backgroundColor: '#f59e0b', 
-                color: 'white', 
-                padding: '0.75rem 1.5rem', 
-                borderRadius: '8px', 
-                border: 'none',
-                fontWeight: '600',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}
+              className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 transition-colors"
             >
               📄 Exportar Dashboard PDF
             </button>
+            <button 
+              onClick={async () => {
+                await exportQuickStats(stats);
+              }}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 transition-colors"
+            >
+              📋 Resumen Ejecutivo PDF
+            </button> */}
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
 // ReportsPage simplificada para testing
 const SimpleReportsPage = () => {
-  const [reports, setReports] = React.useState<any[]>([]);
+  const [reports, setReports] = React.useState<Report[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState('');
 
@@ -808,13 +747,10 @@ const SimpleReportsPage = () => {
   React.useEffect(() => {
     const fetchReports = async () => {
       try {
-        let token = localStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         
         if (!token) {
-          setError('No estás autenticado. Redirigiendo al login...');
-          setTimeout(() => {
-            window.location.href = '/login';
-          }, 2000);
+          setError('No estás autenticado');
           return;
         }
 
@@ -865,93 +801,70 @@ const SimpleReportsPage = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: '20px', minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-            📊 Mis Informes
-          </h1>
-          <div style={{ textAlign: 'center', padding: '3rem' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⏳</div>
-            <p>Cargando informes...</p>
+      <Layout>
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">⏳</div>
+          <p className="text-gray-600">Cargando informes...</p>
           </div>
-        </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div style={{ padding: '20px', minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+    <Layout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
           📊 Mis Informes
         </h1>
-        <p style={{ color: '#6b7280', marginBottom: '2rem' }}>
+          <p className="text-gray-600">
           Gestiona y visualiza tus informes de análisis de ventas
         </p>
+        </div>
         
         {error && (
-          <div style={{ backgroundColor: '#fef2f2', color: '#dc2626', padding: '1rem', borderRadius: '6px', marginBottom: '2rem' }}>
+          <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg">
             {error}
           </div>
         )}
         
-        <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', marginBottom: '2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '600' }}>Informes Recientes</h2>
+        <div className="bg-white rounded-xl shadow-sm p-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">Informes Recientes</h2>
             <a 
               href="/upload" 
-              style={{ 
-                backgroundColor: '#3b82f6', 
-                color: 'white', 
-                padding: '0.5rem 1rem', 
-                borderRadius: '6px', 
-                textDecoration: 'none',
-                fontWeight: '500',
-                fontSize: '0.875rem'
-              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             >
               📤 Subir Nuevo Archivo
             </a>
           </div>
           
           {reports.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
-              <p style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>📄 No tienes informes todavía</p>
-              <p style={{ marginBottom: '2rem' }}>Sube tu primer archivo CSV para generar informes automáticos</p>
+            <div className="text-center py-12">
+              <p className="text-lg mb-4 text-gray-600">📄 No tienes informes todavía</p>
+              <p className="mb-8 text-gray-500">Sube tu primer archivo CSV para generar informes automáticos</p>
               <a 
                 href="/upload" 
-                style={{ 
-                  backgroundColor: '#3b82f6', 
-                  color: 'white', 
-                  padding: '0.75rem 1.5rem', 
-                  borderRadius: '6px', 
-                  textDecoration: 'none',
-                  fontWeight: '500'
-                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
               >
                 📤 Subir Archivo
               </a>
             </div>
           ) : (
-            <div style={{ display: 'grid', gap: '1rem' }}>
+            <div className="space-y-4">
               {reports.map((report) => (
-                <div key={report.id} style={{ 
-                  border: '1px solid #e5e7eb', 
-                  borderRadius: '8px', 
-                  padding: '1.5rem',
-                  backgroundColor: '#fafafa',
-                  transition: 'all 0.2s'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                <div key={report.id} className="border border-gray-200 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
+                  <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
                         {report.title || `Informe #${report.id}`}
                       </h3>
-                      <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+                      <p className="text-gray-500 text-sm">
                         Creado: {new Date(report.created_at).toLocaleDateString()}
                       </p>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div className="flex gap-2">
                       <button 
                         onClick={async () => {
                           try {
@@ -975,60 +888,39 @@ const SimpleReportsPage = () => {
                             } else {
                               alert('Error al descargar el PDF');
                             }
-                          } catch (error) {
+                          } catch {
                             alert('Error de conexión al descargar PDF');
                           }
                         }}
-                        style={{ 
-                          backgroundColor: '#dc2626', 
-                          color: 'white', 
-                          padding: '0.5rem 1rem', 
-                          borderRadius: '6px', 
-                          border: 'none',
-                          fontWeight: '500',
-                          fontSize: '0.875rem',
-                          cursor: 'pointer'
-                        }}
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                       >
                         📄 PDF
                       </button>
                       <a 
                         href={`/reports/${report.id}`}
-                        style={{ 
-                          backgroundColor: '#10b981', 
-                          color: 'white', 
-                          padding: '0.5rem 1rem', 
-                          borderRadius: '6px', 
-                          textDecoration: 'none',
-                          fontWeight: '500',
-                          fontSize: '0.875rem'
-                        }}
+                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                       >
                         Ver Detalles →
                       </a>
                     </div>
                   </div>
                   
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>Registros</p>
-                      <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1f2937' }}>
+                      <p className="text-xs text-gray-500 mb-1">Registros</p>
+                      <p className="text-xl font-bold text-gray-900">
                         {report.total_records || 0}
                       </p>
                     </div>
                     <div>
-                      <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>Total Ventas</p>
-                      <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#16a34a' }}>
+                      <p className="text-xs text-gray-500 mb-1">Total Ventas</p>
+                      <p className="text-xl font-bold text-green-600">
                         ${report.total_sales ? Number(report.total_sales).toLocaleString() : '0'}
                       </p>
                     </div>
                     <div>
-                      <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>Estado</p>
-                      <p style={{ 
-                        fontSize: '0.875rem', 
-                        fontWeight: '500',
-                        color: '#10b981'
-                      }}>
+                      <p className="text-xs text-gray-500 mb-1">Estado</p>
+                      <p className="text-sm font-medium text-green-600">
                         ✅ Completado
                       </p>
                     </div>
@@ -1039,47 +931,31 @@ const SimpleReportsPage = () => {
           )}
         </div>
         
-        <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '1rem' }}>Tipos de Informes</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-            <div style={{ padding: '1rem', border: '1px solid #e5e7eb', borderRadius: '6px' }}>
-              <h4 style={{ fontWeight: '600', marginBottom: '0.5rem' }}>📈 Análisis de Ventas</h4>
-              <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>Tendencias y patrones de ventas</p>
+        <div className="bg-white rounded-xl shadow-sm p-8">
+          <h3 className="text-lg font-semibold mb-4 text-gray-900">Tipos de Informes</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 border border-gray-200 rounded-lg">
+              <h4 className="font-semibold mb-2 text-gray-900">📈 Análisis de Ventas</h4>
+              <p className="text-gray-600 text-sm">Tendencias y patrones de ventas</p>
             </div>
-            <div style={{ padding: '1rem', border: '1px solid #e5e7eb', borderRadius: '6px' }}>
-              <h4 style={{ fontWeight: '600', marginBottom: '0.5rem' }}>🏷️ Análisis por Producto</h4>
-              <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>Performance de productos</p>
+            <div className="p-4 border border-gray-200 rounded-lg">
+              <h4 className="font-semibold mb-2 text-gray-900">🏷️ Análisis por Producto</h4>
+              <p className="text-gray-600 text-sm">Performance de productos</p>
             </div>
-            <div style={{ padding: '1rem', border: '1px solid #e5e7eb', borderRadius: '6px' }}>
-              <h4 style={{ fontWeight: '600', marginBottom: '0.5rem' }}>🌍 Análisis Regional</h4>
-              <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>Ventas por región geográfica</p>
+            <div className="p-4 border border-gray-200 rounded-lg">
+              <h4 className="font-semibold mb-2 text-gray-900">🌍 Análisis Regional</h4>
+              <p className="text-gray-600 text-sm">Ventas por región geográfica</p>
             </div>
           </div>
         </div>
-        
-        <div style={{ marginTop: '2rem' }}>
-          <a 
-            href="/dashboard" 
-            style={{ 
-              backgroundColor: '#6b7280', 
-              color: 'white', 
-              padding: '0.75rem 1.5rem', 
-              borderRadius: '6px', 
-              textDecoration: 'none',
-              fontWeight: '500'
-            }}
-          >
-            ← Volver al Dashboard
-          </a>
         </div>
-      </div>
-    </div>
+    </Layout>
   );
 };
 
 // ReportDetailPage simplificada para testing
 const SimpleReportDetailPage = () => {
-  const [report, setReport] = React.useState<any>(null);
+  const [report, setReport] = React.useState<Report | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState('');
   const reportId = window.location.pathname.split('/').pop();
@@ -1120,13 +996,10 @@ const SimpleReportDetailPage = () => {
   React.useEffect(() => {
     const fetchReport = async () => {
       try {
-        let token = localStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         
         if (!token) {
-          setError('No estás autenticado. Redirigiendo al login...');
-          setTimeout(() => {
-            window.location.href = '/login';
-          }, 2000);
+          setError('No estás autenticado');
           return;
         }
 
@@ -1179,67 +1052,70 @@ const SimpleReportDetailPage = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: '20px', minHeight: '100vh', backgroundColor: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⏳</div>
-          <p>Cargando informe...</p>
+      <Layout>
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">⏳</div>
+          <p className="text-gray-600">Cargando informe...</p>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   if (error) {
     return (
-      <div style={{ padding: '20px', minHeight: '100vh', backgroundColor: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>❌</div>
-          <p style={{ color: '#dc2626', marginBottom: '2rem' }}>{error}</p>
-          <a href="/reports" style={{ backgroundColor: '#3b82f6', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '6px', textDecoration: 'none' }}>
+      <Layout>
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">❌</div>
+          <p className="text-red-600 mb-8">{error}</p>
+          <a href="/reports" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
             ← Volver a Informes
           </a>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div style={{ padding: '20px', minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+    <Layout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
           📊 Informe #{reportId}
         </h1>
+        </div>
         
         {report && (
-          <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', marginBottom: '2rem' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>
+          <div className="bg-white rounded-xl shadow-sm p-8">
+            <h2 className="text-2xl font-semibold mb-6 text-gray-900">
               {report.title || 'Análisis de Datos'}
             </h2>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-              <div style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '6px' }}>
-                <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>Total de Registros</h3>
-                <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937' }}>{report.total_records || 0}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Total de Registros</h3>
+                <p className="text-2xl font-bold text-gray-900">{report.total_records || 0}</p>
               </div>
               
-              <div style={{ backgroundColor: '#f0fdf4', padding: '1rem', borderRadius: '6px' }}>
-                <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>Total de Ventas</h3>
-                <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#16a34a' }}>
+              <div className="bg-green-50 p-6 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Total de Ventas</h3>
+                <p className="text-2xl font-bold text-green-600">
                   ${report.total_sales ? Number(report.total_sales).toLocaleString() : '0'}
                 </p>
               </div>
               
-              <div style={{ backgroundColor: '#eff6ff', padding: '1rem', borderRadius: '6px' }}>
-                <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>Fecha de Análisis</h3>
-                <p style={{ fontSize: '1rem', color: '#1f2937' }}>
+              <div className="bg-blue-50 p-6 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Fecha de Análisis</h3>
+                <p className="text-base text-gray-900">
                   {report.created_at ? new Date(report.created_at).toLocaleDateString() : 'N/A'}
                 </p>
               </div>
             </div>
             
             {report.summary && (
-              <div style={{ marginBottom: '2rem' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem' }}>📋 Resumen del Análisis</h3>
-                <div style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '6px', whiteSpace: 'pre-wrap' }}>
+              <div className="mb-8">
+                <h3 className="text-xl font-semibold mb-4 text-gray-900">📋 Resumen del Análisis</h3>
+                <div className="bg-gray-50 p-6 rounded-lg whitespace-pre-wrap text-gray-700">
                   {report.summary}
                 </div>
               </div>
@@ -1247,8 +1123,8 @@ const SimpleReportDetailPage = () => {
             
             {report.insights && (
               <div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem' }}>💡 Insights Generados</h3>
-                <div style={{ backgroundColor: '#fef3c7', padding: '1rem', borderRadius: '6px', whiteSpace: 'pre-wrap' }}>
+                <h3 className="text-xl font-semibold mb-4 text-gray-900">💡 Insights Generados</h3>
+                <div className="bg-yellow-50 p-6 rounded-lg whitespace-pre-wrap text-yellow-800">
                   {report.insights}
                 </div>
               </div>
@@ -1256,32 +1132,12 @@ const SimpleReportDetailPage = () => {
           </div>
         )}
         
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div className="flex flex-wrap gap-4">
           <a 
             href="/reports" 
-            style={{ 
-              backgroundColor: '#6b7280', 
-              color: 'white', 
-              padding: '0.75rem 1.5rem', 
-              borderRadius: '6px', 
-              textDecoration: 'none',
-              fontWeight: '500'
-            }}
+            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
           >
             ← Volver a Informes
-          </a>
-          <a 
-            href="/dashboard" 
-            style={{ 
-              backgroundColor: '#3b82f6', 
-              color: 'white', 
-              padding: '0.75rem 1.5rem', 
-              borderRadius: '6px', 
-              textDecoration: 'none',
-              fontWeight: '500'
-            }}
-          >
-            🏠 Dashboard
           </a>
           <button 
             onClick={async () => {
@@ -1306,62 +1162,25 @@ const SimpleReportDetailPage = () => {
                 } else {
                   alert('Error al descargar el PDF');
                 }
-              } catch (error) {
+              } catch {
                 alert('Error de conexión al descargar PDF');
               }
             }}
-            style={{ 
-              backgroundColor: '#dc2626', 
-              color: 'white', 
-              padding: '0.75rem 1.5rem', 
-              borderRadius: '6px', 
-              border: 'none',
-              fontWeight: '500',
-              cursor: 'pointer'
-            }}
+            className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
           >
             📄 Descargar PDF
           </button>
           <a 
             href="/upload" 
-            style={{ 
-              backgroundColor: '#10b981', 
-              color: 'white', 
-              padding: '0.75rem 1.5rem', 
-              borderRadius: '6px', 
-              textDecoration: 'none',
-              fontWeight: '500'
-            }}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
           >
             📤 Subir Otro Archivo
           </a>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
-
-// Componente temporal para páginas en desarrollo
-const TempPage = ({ name }: { name: string }) => (
-  <div style={{ 
-    padding: '20px', 
-    fontSize: '18px', 
-    color: 'green',
-    backgroundColor: '#f0fdf4',
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column'
-  }}>
-    <h1>🚧 Página {name}</h1>
-    <p>Esta página se agregará próximamente</p>
-    <div style={{ marginTop: '20px' }}>
-      <a href="/dashboard" style={{ color: 'green', marginRight: '20px' }}>Volver al Dashboard</a>
-      <a href="/login" style={{ color: 'green' }}>Ir a Login</a>
-    </div>
-  </div>
-);
 
 function App() {
   return (
@@ -1372,6 +1191,25 @@ function App() {
             {/* Páginas públicas que funcionan */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/logout" element={<LogoutPage />} />
+              
+            {/* Páginas de perfil y usuario */}
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/user-info"
+                element={
+                  <ProtectedRoute>
+                    <UserInfoPage />
+                  </ProtectedRoute>
+                }
+              />
               
             {/* Dashboard COMPLETO con gráficos */}
               <Route

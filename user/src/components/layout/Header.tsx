@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, Transition, Fragment } from '@headlessui/react';
+import { Menu, Transition } from '@headlessui/react';
 import {
   BarChart3,
   Upload,
@@ -109,6 +109,20 @@ export const Header: React.FC = () => {
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
+                      <Link
+                        to="/user-info"
+                        className={cn(
+                          active ? 'bg-gray-100' : '',
+                          'flex items-center space-x-2 px-4 py-2 text-sm text-gray-700'
+                        )}
+                      >
+                        <User className="h-4 w-4" />
+                        <span>Información de Usuario</span>
+                      </Link>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
                       <button
                         onClick={handleLogout}
                         className={cn(
@@ -190,6 +204,14 @@ export const Header: React.FC = () => {
                 >
                   <User className="h-5 w-5" />
                   <span>Mi Perfil</span>
+                </Link>
+                <Link
+                  to="/user-info"
+                  className="flex items-center space-x-2 px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <User className="h-5 w-5" />
+                  <span>Información de Usuario</span>
                 </Link>
                 <button
                   onClick={() => {

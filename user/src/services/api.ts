@@ -88,8 +88,21 @@ export const authService = {
     return response.data;
   },
 
+  logout: async (): Promise<{ message: string }> => {
+    const refreshToken = localStorage.getItem('refresh_token');
+    const response = await api.post('/auth/logout/', {
+      refresh_token: refreshToken
+    });
+    return response.data;
+  },
+
   getProfile: async (): Promise<User> => {
     const response = await api.get('/auth/profile/');
+    return response.data;
+  },
+
+  getUserInfo: async (): Promise<User> => {
+    const response = await api.get('/auth/user-info/');
     return response.data;
   },
 

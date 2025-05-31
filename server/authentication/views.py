@@ -3,8 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.exceptions import TokenError
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from .models import User
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer
 
@@ -68,31 +67,14 @@ def user_info_view(request):
 @permission_classes([IsAuthenticated])
 def logout_view(request):
     """
-    Cerrar sesión del usuario invalidando el refresh token
+    Logout del usuario actual
     """
     try:
-        refresh_token = request.data.get('refresh_token')
-        if not refresh_token:
-            return Response(
-                {'error': 'Refresh token es requerido'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        # Invalidar el refresh token agregándolo a la blacklist
-        token = RefreshToken(refresh_token)
-        token.blacklist()
-        
-        return Response(
-            {'message': 'Sesión cerrada exitosamente'}, 
-            status=status.HTTP_200_OK
-        )
-    except TokenError:
-        return Response(
-            {'error': 'Token inválido'}, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        logout(request)
+        return Response({
+            'message': 'Logout exitoso'
+        }, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response(
-            {'error': 'Error al cerrar sesión'}, 
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        ) 
+        return Response({
+            'error': 'Error al hacer logout'
+        }, status=status.HTTP_400_BAD_REQUEST) 
