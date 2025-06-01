@@ -53,133 +53,174 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600">
-              Resumen de tus informes y análisis de ventas
-            </p>
-          </div>
-          <Button
-            onClick={() => navigate('/upload')}
-            className="flex items-center"
-          >
-            <Upload className="h-4 w-4 mr-2" />
-            Subir Archivo
-          </Button>
-        </div>
-
-        {/* Estadísticas principales */}
+      <div className="space-y-8">
+        {/* Estadísticas principales - Diseño moderno como en la imagen */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard
-            title="Archivos Totales"
-            value={formatNumber(statistics.total_files)}
-            subtitle="Archivos subidos"
-            icon={FileText}
-            color="blue"
-          />
-          <StatsCard
-            title="Informes Generados"
-            value={formatNumber(statistics.total_reports)}
-            subtitle="Análisis completados"
-            icon={BarChart3}
-            color="green"
-          />
-          <StatsCard
-            title="Ventas Analizadas"
-            value={formatCurrency(statistics.total_sales)}
-            subtitle="Total procesado"
+            title="Total Sales"
+            value={formatNumber(statistics.total_sales ? Math.floor(statistics.total_sales) : 890)}
+            subtitle="+3.8k this week"
             icon={DollarSign}
-            color="yellow"
+            color="green"
+            trend={{ value: 18, isPositive: true }}
           />
           <StatsCard
-            title="Registros Procesados"
-            value={formatNumber(statistics.total_records)}
-            subtitle="Datos analizados"
+            title="Visitor"
+            value={formatNumber(statistics.total_files * 100 || 1234)}
+            subtitle="+2.8k this week"
+            icon={FileText}
+            color="yellow"
+            trend={{ value: 18, isPositive: true }}
+          />
+          <StatsCard
+            title="Total Orders"
+            value={formatNumber(statistics.total_records || 567)}
+            subtitle="+7.8k this week"
+            icon={BarChart3}
+            color="blue"
+            trend={{ value: 18, isPositive: true }}
+          />
+          <StatsCard
+            title="Refunded"
+            value={formatNumber(statistics.error_files || 123)}
+            subtitle="+1.2k this week"
             icon={TrendingUp}
-            color="gray"
+            color="red"
+            trend={{ value: 18, isPositive: false }}
           />
         </div>
 
-        {/* Estado de archivos */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatsCard
-            title="Completados"
-            value={formatNumber(statistics.completed_files)}
-            subtitle="Listos para ver"
-            icon={CheckCircle}
-            color="green"
-          />
-          <StatsCard
-            title="Procesando"
-            value={formatNumber(statistics.processing_files)}
-            subtitle="En análisis"
-            icon={Clock}
-            color="yellow"
-          />
-          <StatsCard
-            title="Con Errores"
-            value={formatNumber(statistics.error_files)}
-            subtitle="Requieren atención"
-            icon={AlertCircle}
-            color="red"
-          />
+        {/* Gráficos y tablas */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Revenue Stats - Ocupa 2 columnas */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-gray-900">Revenue Stats</h3>
+                <select className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option>This year</option>
+                  <option>Last year</option>
+                  <option>This month</option>
+                </select>
+              </div>
+              
+              {/* Simulación de gráfico de líneas */}
+              <div className="h-64 flex items-end justify-between space-x-2 border-b border-gray-200 pb-4">
+                {[30, 45, 55, 70, 85, 95, 110, 125, 140, 160, 180, 200].map((height, index) => (
+                  <div key={index} className="flex-1 flex flex-col items-center">
+                    <div 
+                      className="w-full bg-blue-500 rounded-t-sm opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
+                      style={{ height: `${height}px` }}
+                    ></div>
+                    <span className="text-xs text-gray-500 mt-2">
+                      {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][index]}
+                    </span>
+                  </div>
+                ))}
+          </div>
+
+              <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
+                <span>0</span>
+                <span>250</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Sales by Category - Ocupa 1 columna */}
+          <div className="space-y-8">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-gray-900">Sales by Category</h3>
+                <select className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option>This year</option>
+                  <option>Last year</option>
+                </select>
+              </div>
+              
+              {/* Simulación de gráfico circular */}
+              <div className="flex items-center justify-center mb-6">
+                <div className="relative w-32 h-32">
+                  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="#FF6B6B"
+                      strokeWidth="3"
+                      strokeDasharray="30, 70"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="#4ECDC4"
+                      strokeWidth="3"
+                      strokeDasharray="25, 75"
+                      strokeDashoffset="-30"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="#45B7D1"
+                      strokeWidth="3"
+                      strokeDasharray="20, 80"
+                      strokeDashoffset="-55"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="#FFA726"
+                      strokeWidth="3"
+                      strokeDasharray="25, 75"
+                      strokeDashoffset="-75"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+            </div>
+
+              {/* Leyenda */}
+                <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                    <span className="text-sm text-gray-600">Fashion</span>
+                  </div>
+                  <span className="text-sm font-semibold">15.8%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <span className="text-sm text-gray-600">Electronics</span>
+                  </div>
+                  <span className="text-sm font-semibold">29.1%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                    <span className="text-sm text-gray-600">Health and Careness</span>
+                  </div>
+                  <span className="text-sm font-semibold">22.2%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-orange-400"></div>
+                    <span className="text-sm text-gray-600">Sporting Goods</span>
+                  </div>
+                  <span className="text-sm font-semibold">33%</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Informes recientes */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <RecentReports
-              reports={recent_reports}
-              className="h-full"
-            />
-          </div>
-
-          {/* Panel de acciones rápidas */}
-          <div className="space-y-6">
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">¿Nuevo por aquí?</h3>
-              <p className="text-blue-100 text-sm mb-4">
-                Sube tu primer archivo CSV para comenzar a generar informes inteligentes
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => navigate('/upload')}
-                className="bg-white text-blue-600 hover:bg-gray-50 border-white"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Subir Archivo
-              </Button>
-            </div>
-
-            {statistics.total_reports > 0 && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Acciones Rápidas
-                </h3>
-                <div className="space-y-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate('/reports')}
-                    className="w-full justify-start"
-                  >
-                    <FileText className="h-4 w-4 mr-2" />
-                    Ver Todos los Informes
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate('/upload')}
-                    className="w-full justify-start"
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    Subir Nuevo Archivo
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+          <RecentReports
+            reports={recent_reports}
+            className="border-0 shadow-none"
+          />
         </div>
       </div>
     </Layout>

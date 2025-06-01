@@ -1,6 +1,5 @@
 import React from 'react';
-import { LucideIcon } from 'lucide-react';
-import { Card } from '../ui';
+import type { LucideIcon } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
 interface StatsCardProps {
@@ -12,30 +11,45 @@ interface StatsCardProps {
     value: number;
     isPositive: boolean;
   };
-  color?: 'blue' | 'green' | 'yellow' | 'red' | 'gray';
+  color?: 'blue' | 'green' | 'yellow' | 'red' | 'purple';
   className?: string;
 }
 
 const colorClasses = {
   blue: {
-    icon: 'bg-blue-500 text-white',
-    trend: 'text-blue-600',
+    bg: 'bg-blue-50',
+    iconBg: 'bg-blue-500',
+    text: 'text-blue-600',
+    trendPositive: 'text-blue-600',
+    trendNegative: 'text-red-500',
   },
   green: {
-    icon: 'bg-green-500 text-white',
-    trend: 'text-green-600',
+    bg: 'bg-green-50',
+    iconBg: 'bg-green-500',
+    text: 'text-green-600',
+    trendPositive: 'text-green-600',
+    trendNegative: 'text-red-500',
   },
   yellow: {
-    icon: 'bg-yellow-500 text-white',
-    trend: 'text-yellow-600',
+    bg: 'bg-yellow-50',
+    iconBg: 'bg-yellow-500',
+    text: 'text-yellow-600',
+    trendPositive: 'text-green-600',
+    trendNegative: 'text-red-500',
   },
   red: {
-    icon: 'bg-red-500 text-white',
-    trend: 'text-red-600',
+    bg: 'bg-red-50',
+    iconBg: 'bg-red-500',
+    text: 'text-red-600',
+    trendPositive: 'text-green-600',
+    trendNegative: 'text-red-600',
   },
-  gray: {
-    icon: 'bg-gray-500 text-white',
-    trend: 'text-gray-600',
+  purple: {
+    bg: 'bg-purple-50',
+    iconBg: 'bg-purple-500',
+    text: 'text-purple-600',
+    trendPositive: 'text-green-600',
+    trendNegative: 'text-red-500',
   },
 };
 
@@ -51,61 +65,56 @@ export const StatsCard: React.FC<StatsCardProps> = ({
   const colors = colorClasses[color];
 
   return (
-    <Card className={cn('p-6', className)}>
-      <div className="flex items-center">
-        <div className="flex-shrink-0">
-          <div className={cn('p-3 rounded-lg', colors.icon)}>
-            <Icon className="h-6 w-6" />
+    <div className={cn('bg-white rounded-xl p-6 shadow-sm border border-gray-100', className)}>
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className={cn('p-2 rounded-lg', colors.iconBg)}>
+              <Icon className="h-5 w-5 text-white" />
           </div>
-        </div>
-        <div className="ml-5 w-0 flex-1">
-          <dl>
-            <dt className="text-sm font-medium text-gray-500 truncate">
+            <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
               {title}
-            </dt>
-            <dd className="flex items-baseline">
-              <div className="text-2xl font-semibold text-gray-900">
+            </h3>
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex items-baseline space-x-2">
+              <span className="text-3xl font-bold text-gray-900">
                 {value}
-              </div>
+              </span>
               {trend && (
-                <div
-                  className={cn(
-                    'ml-2 flex items-baseline text-sm font-semibold',
-                    trend.isPositive ? 'text-green-600' : 'text-red-600'
+                <div className="flex items-center space-x-1">
+                  {trend.isPositive ? (
+                    <span className="text-green-500 text-lg">▲</span>
+                  ) : (
+                    <span className="text-red-500 text-lg">▼</span>
                   )}
-                >
-                  <svg
-                    className={cn(
-                      'self-center flex-shrink-0 h-5 w-5',
-                      trend.isPositive ? 'text-green-500' : 'text-red-500'
-                    )}
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d={
-                        trend.isPositive
-                          ? 'M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z'
-                          : 'M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z'
-                      }
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span className="sr-only">
-                    {trend.isPositive ? 'Aumentó' : 'Disminuyó'} en
+                  <span className={cn(
+                    'text-sm font-semibold',
+                    trend.isPositive ? 'text-green-600' : 'text-red-500'
+                  )}>
+                    {Math.abs(trend.value)}%
                   </span>
-                  {Math.abs(trend.value)}%
                 </div>
               )}
-            </dd>
+            </div>
+            
             {subtitle && (
-              <dd className="mt-1 text-sm text-gray-500">{subtitle}</dd>
+              <p className="text-sm text-gray-500">
+                {trend && (
+                  <span className={cn(
+                    'font-medium mr-1',
+                    trend.isPositive ? 'text-green-600' : 'text-red-500'
+                  )}>
+                    {trend.isPositive ? '+' : '-'}{Math.abs(trend.value)}%
+                  </span>
+                )}
+                {subtitle}
+              </p>
             )}
-          </dl>
+          </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }; 

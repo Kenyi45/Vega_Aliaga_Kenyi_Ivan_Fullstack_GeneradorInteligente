@@ -1,17 +1,34 @@
-import React from 'react';
-import { Header } from './Header';
+import React, { useState } from 'react';
+import { Sidebar } from './Sidebar';
+import { TopBar } from './TopBar';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
+      <Sidebar 
+        isExpanded={isSidebarExpanded}
+        setIsExpanded={setIsSidebarExpanded}
+      />
+      
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Bar */}
+        <TopBar />
+        
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-7xl mx-auto">
         {children}
+          </div>
       </main>
+      </div>
     </div>
   );
 }; 

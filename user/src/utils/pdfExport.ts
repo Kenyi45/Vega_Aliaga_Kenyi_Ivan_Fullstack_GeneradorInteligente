@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import type { DashboardStatistics } from '../types/dashboard';
+import { formatCurrency } from './formatters';
 
 export interface ExportOptions {
   filename?: string;
@@ -246,11 +247,11 @@ export const exportQuickStats = async (stats: DashboardStatistics) => {
   pdf.setTextColor(31, 41, 55);
   
   const metrics = [
-    { label: '💰 Total de Ventas', value: `$${stats.total_sales ? Number(stats.total_sales).toLocaleString() : '0'}` },
+    { label: '💰 Total de Ventas', value: formatCurrency(stats.total_sales || 0) },
     { label: '📁 Archivos Procesados', value: `${stats.total_files || 0}` },
     { label: '📊 Informes Generados', value: `${stats.total_reports || 0}` },
     { label: '📋 Registros Analizados', value: `${stats.total_records?.toLocaleString() || '0'}` },
-    { label: '💡 Promedio por Venta', value: `$${stats.total_records > 0 ? ((stats.total_sales || 0) / stats.total_records).toFixed(2) : '0'}` }
+    { label: '💡 Promedio por Venta', value: formatCurrency(stats.total_records > 0 ? ((stats.total_sales || 0) / stats.total_records) : 0) }
   ];
 
   metrics.forEach((metric) => {

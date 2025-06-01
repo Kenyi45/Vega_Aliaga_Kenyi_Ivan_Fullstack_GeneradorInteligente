@@ -5,11 +5,31 @@
 /* Estilos base para la aplicación */
 @layer base {
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    font-variant-numeric: tabular-nums;
   }
   
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-gray-50 text-gray-900 antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Mejores estilos para headings */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-jakarta;
+    font-feature-settings: 'ss01', 'ss02';
+  }
+
+  /* Estilos para texto de cuerpo */
+  p, span, div {
+    @apply font-sans;
+  }
+
+  /* Estilos para botones y elementos interactivos */
+  button, input, select, textarea {
+    @apply font-inter;
   }
 }
 
@@ -28,6 +48,24 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  /* Estilos modernos para tarjetas */
+  .card-modern {
+    @apply bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300;
+  }
+
+  /* Botones modernos */
+  .btn-modern {
+    @apply font-inter font-medium px-6 py-3 rounded-xl transition-all duration-200 hover:shadow-lg transform hover:-translate-y-0.5;
+  }
+
+  .btn-primary {
+    @apply btn-modern bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800;
+  }
+
+  .btn-secondary {
+    @apply btn-modern bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300;
+  }
 }
 
 /* Estilos para scrollbars personalizados */
@@ -38,29 +76,47 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-track {
-    background: rgb(243 244 246);
-    border-radius: 3px;
+    background: rgb(248 250 252);
+    border-radius: 4px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgb(156 163 175);
-    border-radius: 3px;
+    background: linear-gradient(135deg, rgb(156 163 175), rgb(209 213 219));
+    border-radius: 4px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: rgb(107 114 128);
+    background: linear-gradient(135deg, rgb(107 114 128), rgb(156 163 175));
+  }
+
+  /* Utilidades para glassmorphism */
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20;
+  }
+
+  /* Efectos de elevación moderna */
+  .elevation-1 {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  }
+
+  .elevation-2 {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  }
+
+  .elevation-3 {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   }
 }
 
-/* Animaciones personalizadas */
+/* Animaciones personalizadas mejoradas */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -68,30 +124,73 @@
   }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-/* Estilos para gráficos de Recharts */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInFromRight 0.4s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Estilos para gráficos de Recharts mejorados */
 .recharts-cartesian-axis-tick-value {
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 12px;
+  font-weight: 500;
   fill: #6b7280;
 }
 
 .recharts-legend-item-text {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
   font-size: 14px !important;
+  font-weight: 500 !important;
   color: #374151 !important;
 }
 
 .recharts-tooltip-wrapper {
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  border: none;
 }
 
-/* Estilos para formularios */
+/* Estilos para formularios mejorados */
 input[type="file"]::-webkit-file-upload-button {
-  @apply bg-blue-600 text-white px-4 py-2 rounded-md border-none cursor-pointer hover:bg-blue-700 transition-colors;
+  @apply btn-primary text-sm;
+  border: none;
+  margin-right: 12px;
 }
 
 input[type="file"]::file-selector-button {
-  @apply bg-blue-600 text-white px-4 py-2 rounded-md border-none cursor-pointer hover:bg-blue-700 transition-colors;
+  @apply btn-primary text-sm;
+  border: none;
+  margin-right: 12px;
 }

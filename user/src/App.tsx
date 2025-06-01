@@ -20,6 +20,7 @@ import {
   Legend, 
   ResponsiveContainer 
 } from 'recharts';
+import { formatCurrency, formatNumber } from './utils/formatters';
 
 // Páginas que funcionan
 import { LoginPage } from './pages/LoginPage';
@@ -495,7 +496,7 @@ const FullDashboard = () => {
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            📊 Dashboard - IntelliReport
+            📊 Dashboard
           </h1>
           <p className="text-gray-600">
             Resumen ejecutivo de tus análisis de datos y métricas de negocio
@@ -512,7 +513,7 @@ const FullDashboard = () => {
               <div className="text-2xl">💰</div>
             </div>
             <p className="text-3xl font-bold text-gray-900 mb-2">
-              ${stats.total_sales ? Number(stats.total_sales).toLocaleString() : '0'}
+              {formatCurrency(stats.total_sales || 0)}
             </p>
             <p className="text-sm text-green-600">
               📈 Basado en {stats.total_records} registros
@@ -557,7 +558,7 @@ const FullDashboard = () => {
               <div className="text-2xl">📊</div>
             </div>
             <p className="text-3xl font-bold text-yellow-600 mb-2">
-              ${stats.total_records > 0 ? ((stats.total_sales || 0) / stats.total_records).toFixed(2) : '0'}
+              {formatCurrency(stats.total_records > 0 ? ((stats.total_sales || 0) / stats.total_records) : 0)}
             </p>
             <p className="text-sm text-yellow-600">
               💡 Valor promedio calculado
@@ -641,7 +642,7 @@ const FullDashboard = () => {
               </h4>
               <p className="text-sm text-gray-600 leading-relaxed">
                 {stats.total_files > 0 ? 
-                  `Basado en ${stats.total_files} archivo(s) procesado(s), se han analizado ${stats.total_records.toLocaleString()} registros de ventas, generando un volumen total de $${Number(stats.total_sales || 0).toLocaleString()}. El promedio por transacción es de $${stats.total_records > 0 ? ((stats.total_sales || 0) / stats.total_records).toFixed(2) : '0'}.`
+                  `Basado en ${stats.total_files} archivo(s) procesado(s), se han analizado ${stats.total_records.toLocaleString()} registros de ventas, generando un volumen total de ${formatCurrency(stats.total_sales || 0)}. El promedio por transacción es de ${formatCurrency(stats.total_records > 0 ? ((stats.total_sales || 0) / stats.total_records) : 0)}.`
                   :
                   'Aún no has subido archivos para análisis. Te recomendamos comenzar subiendo un archivo CSV con datos de ventas para generar insights automáticos con IA.'
                 }
@@ -915,7 +916,7 @@ const SimpleReportsPage = () => {
                     <div>
                       <p className="text-xs text-gray-500 mb-1">Total Ventas</p>
                       <p className="text-xl font-bold text-green-600">
-                        ${report.total_sales ? Number(report.total_sales).toLocaleString() : '0'}
+                        {formatCurrency(report.total_sales ? Number(report.total_sales) : 0)}
                       </p>
                     </div>
                     <div>
@@ -1100,7 +1101,7 @@ const SimpleReportDetailPage = () => {
               <div className="bg-green-50 p-6 rounded-lg">
                 <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Total de Ventas</h3>
                 <p className="text-2xl font-bold text-green-600">
-                  ${report.total_sales ? Number(report.total_sales).toLocaleString() : '0'}
+                  {formatCurrency(report.total_sales ? Number(report.total_sales) : 0)}
                 </p>
               </div>
               
