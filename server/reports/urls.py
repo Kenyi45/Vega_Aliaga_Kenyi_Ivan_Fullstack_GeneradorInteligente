@@ -16,6 +16,7 @@ urlpatterns = [
     
     # PDF
     path('reports/<int:report_id>/generate-pdf/', views.generate_pdf_view, name='generate-pdf'),
+    path('reports/<int:report_id>/regenerate-pdf/', views.regenerate_pdf_view, name='regenerate-pdf'),
     path('reports/<int:report_id>/download-pdf/', views.download_pdf_view, name='download-pdf'),
     
     # Dashboard

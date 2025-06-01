@@ -132,6 +132,37 @@ def generate_pdf_view(request, report_id):
             'error': f'Error generando PDF: {str(e)}'
         }, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def regenerate_pdf_view(request, report_id):
+    """
+    Forzar regeneración de PDF eliminando el existente
+    """
+    try:
+        report = get_object_or_404(Report, id=report_id, csv_file__user=request.user)
+        
+        # Eliminar PDF existente si existe
+        if report.pdf_file:
+            if os.path.exists(report.pdf_file.path):
+                os.remove(report.pdf_file.path)
+            report.pdf_file.delete(save=False)
+            report.pdf_file = None
+            report.save()
+        
+        # Generar nuevo PDF
+        pdf_service = PDFReportService(report)
+        pdf_file = pdf_service.generate_pdf()
+        
+        return Response({
+            'message': 'PDF regenerado exitosamente con formato de moneda actualizado',
+            'pdf_url': request.build_absolute_uri(pdf_file.url)
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({
+            'error': f'Error regenerando PDF: {str(e)}'
+        }, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def download_pdf_view(request, report_id):

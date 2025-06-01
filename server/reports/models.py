@@ -6,6 +6,15 @@ def upload_to(instance, filename):
     """Función para organizar la subida de archivos"""
     return f'csv_files/{instance.user.id}/{filename}'
 
+def format_currency_for_model(amount):
+    """Función para formatear moneda en soles peruanos para modelos"""
+    try:
+        if amount is None:
+            return "S/ 0.00"
+        return f"S/ {float(amount):,.2f}"
+    except (ValueError, TypeError):
+        return "S/ 0.00"
+
 class CSVFile(models.Model):
     """
     Modelo para almacenar archivos CSV subidos por los usuarios
@@ -85,7 +94,7 @@ class SalesData(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.product} - {self.date} - ${self.sales_amount}"
+        return f"{self.product} - {self.date} - {format_currency_for_model(self.sales_amount)}"
     
     class Meta:
         verbose_name = "Dato de Venta"

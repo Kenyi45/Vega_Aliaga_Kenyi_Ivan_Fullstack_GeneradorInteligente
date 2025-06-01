@@ -50,6 +50,18 @@ class PDFReportService:
             spaceAfter=12
         )
     
+    def format_currency(self, amount):
+        """
+        Formatea un monto como moneda en soles peruanos
+        """
+        try:
+            if amount is None:
+                return "S/ 0.00"
+            # Formatear número con separadores de miles y símbolo de soles
+            return f"S/ {float(amount):,.2f}"
+        except (ValueError, TypeError):
+            return "S/ 0.00"
+    
     def generate_pdf(self):
         """
         Genera el informe PDF completo
@@ -119,7 +131,7 @@ class PDFReportService:
         
         summary_data = [
             ['Métrica', 'Valor'],
-            ['Ventas Totales', f"${self.report.total_sales:,.2f}"],
+            ['Ventas Totales', self.format_currency(self.report.total_sales)],
             ['Total de Registros', f"{self.report.total_records:,}"],
             ['Productos Únicos', f"{len(self.report.top_products.get('labels', []))}"],
             ['Regiones', f"{len(self.report.sales_by_region.get('labels', []))}"]
@@ -157,7 +169,7 @@ class PDFReportService:
             data = self.report.top_products['data'][:5]
             
             for label, value in zip(labels, data):
-                top_5_data.append([label, f"${value:,.2f}"])
+                top_5_data.append([label, self.format_currency(value)])
             
             table = Table(top_5_data, colWidths=[3*inch, 2*inch])
             table.setStyle(TableStyle([
@@ -208,7 +220,7 @@ class PDFReportService:
             plt.plot(months, sales, marker='o', linewidth=2, markersize=8)
             plt.title('Tendencia de Ventas Mensuales', fontsize=16, fontweight='bold')
             plt.xlabel('Mes', fontsize=12)
-            plt.ylabel('Ventas ($)', fontsize=12)
+            plt.ylabel('Ventas (S/)', fontsize=12)
             plt.xticks(rotation=45)
             plt.grid(True, alpha=0.3)
             plt.tight_layout()
@@ -240,13 +252,13 @@ class PDFReportService:
             bars = plt.bar(range(len(labels)), data, color='#3b82f6', alpha=0.8)
             plt.title('Top 8 Productos por Ventas', fontsize=16, fontweight='bold')
             plt.xlabel('Productos', fontsize=12)
-            plt.ylabel('Ventas ($)', fontsize=12)
+            plt.ylabel('Ventas (S/)', fontsize=12)
             plt.xticks(range(len(labels)), labels, rotation=45, ha='right')
             
             # Agregar valores en las barras
             for bar, value in zip(bars, data):
                 plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + max(data)*0.01,
-                        f'${value:,.0f}', ha='center', va='bottom', fontsize=9)
+                        self.format_currency(value), ha='center', va='bottom', fontsize=9)
             
             plt.tight_layout()
             
@@ -295,7 +307,7 @@ class PDFReportService:
                     data.product[:30] + '...' if len(data.product) > 30 else data.product,
                     data.category[:20] + '...' if len(data.category) > 20 else data.category,
                     data.region,
-                    f"${data.sales_amount:,.2f}"
+                    self.format_currency(data.sales_amount)
                 ])
             
             table = Table(table_data, colWidths=[1*inch, 2.5*inch, 1.5*inch, 1*inch, 1*inch])
