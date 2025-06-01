@@ -194,13 +194,13 @@ class DataAnalysisService:
         insights = []
         
         # Insight sobre ventas totales
-        insights.append(f"Las ventas totales ascienden a ${report.total_sales:,.2f} con {report.total_records} registros.")
+        insights.append(f"Las ventas totales ascienden a S/.{report.total_sales:,.2f} con {report.total_records} registros.")
         
         # Insight sobre producto top
         if report.top_products and report.top_products['data']:
             top_product = report.top_products['labels'][0]
             top_sales = report.top_products['data'][0]
-            insights.append(f"El producto más vendido es '{top_product}' con ventas de ${top_sales:,.2f}.")
+            insights.append(f"El producto más vendido es '{top_product}' con ventas de S/.{top_sales:,.2f}.")
         
         # Insight sobre tendencias mensuales
         if len(report.monthly_trends) >= 2:
